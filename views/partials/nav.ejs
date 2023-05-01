@@ -1,0 +1,48 @@
+<html>
+<head>
+  <style>
+input {
+  width: 500px;
+}
+button {
+  margin-left:5px;
+}
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Fitbyte</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <form class="d-flex" method="get" action="/map">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          name="subway_name"
+        />
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <% if(isAuthenticated){ %>
+        <a href="/users/<%= currentUser.username %>/favorite" class="nav-link"
+          >내가 즐겨찾는 역</a
+        >
+      <li class="nav-item">
+        
+       
+      </li>
+      <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+      <% } else { %>
+      <li class="nav-item">
+        <a href="/register" class="nav-link">Sign Up</a>
+      </li>
+      <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
+      <% } %>
+    </ul>
+  </div>
+</nav>
+</body>
+</html>
