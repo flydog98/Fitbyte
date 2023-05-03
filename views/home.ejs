@@ -77,63 +77,82 @@
     <div class="full_screen">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
-        <h2 class="pb-2 border-bottom">목표 운동 시간 00시간 00분</h2>
-        <!-- <form method="POST" action="/time-promise">
+        <h2 class="pb-2 border-bottom">오늘 목표 운동 시간 ___분</h2>
+        <form method="POST" action="/time-promise">
           <label>목표 운동 시간</label>
             <input type="number" name="amount" min="1" max="1440" required>
-            
+            분
           <button type="submit">입력</button>
-        </form> -->
-        
+        </form>
+
         <div style="margin-bottom: 40px"></div>
 
         <h2 class="pb-2 border-bottom">운동 약속</h2>
           <div class="list-group">
-            <label class="list-group-item d-flex gap-3">
-              <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked style="font-size: 1.375em;">
-              <span class="pt-1 form-checked-content">
-                <strong>Finish sales report</strong>
-                <small class="d-block text-body-secondary">
-                  <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"/></svg>
-                  1:00–2:00pm
-                </small>
-              </span>
-            </label>
 
             <!--ADD-->
             <label class="list-group-item d-flex gap-3 bg-body-tertiary">
               <form id="add-task-form">
                 <input type="datetime-local" name="date" required>
-                <input type="minutes" name="amount" required>
+                <input type="number" name="amount" required>
                 <input type="text" name="contents" required>
                 <button type="submit" class="btn btn-primary">Add</button>
               </form>
             </label>
 
 
-            <label class="list-group-item d-flex gap-3 bg-body-tertiary">
-              <input class="form-check-input form-check-input-placeholder bg-body-tertiary flex-shrink-0 pe-none" disabled type="checkbox" value="" style="font-size: 1.375em;">
-              <span class="pt-1 form-checked-content">
-                <span contenteditable="true" class="w-100">Add new task...</span>
-                <small class="d-block text-body-secondary">
-                  <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#list-check"/></svg>
-                  Choose list...
-                </small>
-              </span>
-            </label>
-          </div>
+
+          <script>
+            const addTaskForm = document.getElementById("add-task-form");
+            const taskList = document.querySelector(".list-group");
+          
+            addTaskForm.addEventListener("submit", async (event) => {
+              event.preventDefault();
+          
+              const formData = new FormData(event.target);
+              const response = await fetch("/self-promise", {
+                method: "POST",
+                body: formData,
+              });
+          
+              if (!response.ok) {
+                console.error("Failed to add task");
+                return;
+              }
+          
+              const task = await response.json();
+          
+              const taskItem = document.createElement("label");
+              taskItem.classList.add("list-group-item", "d-flex", "gap-3");
+              taskItem.innerHTML = `
+                <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
+                <span class="pt-1 form-checked-content">
+                  <strong>${task.contents}</strong>
+                  <small class="d-block text-body-secondary">
+                    <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"/></svg>
+                    ${task.date} for ${task.amount} minutes
+                  </small>
+                </span>
+              `;
+          
+              taskList.insertBefore(taskItem, addTaskForm.closest(".list-group-item"));
+              addTaskForm.reset();
+            });
+          </script>
+
+        </div>
 
 
-
-          <div style="margin-bottom: 40px"></div>
+          <div style="margin-bottom: 60px"></div>
 
 
           <a href="URL" target="_blank" style="color: blue; font-size: 25px;">나의 헬스 데이터</a>
 
 
-          <div style="margin-bottom: 40px"></div>
+          <div style="margin-bottom: 60px"></div>
 
           <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
+        </div>
 
 
         </div>
