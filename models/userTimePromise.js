@@ -9,6 +9,11 @@ var userTimePromiseSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  date: {
+    type: Date,
+    required: true,
+    default: () => new Date()
+  },
   achieved: {
     type: Boolean,
     default: false,
