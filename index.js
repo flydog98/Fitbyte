@@ -1,13 +1,13 @@
-var express = require("express");
+const express = require("express");
 const connectDB = require("./config/db");
-var bodyParser = require("body-parser");
-var methodOverride = require("method-override");
-var flash = require("connect-flash");
-var session = require("express-session");
-var passport = require("./config/passport");
-var util = require("./util");
+const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
+const flash = require("connect-flash");
+const session = require("express-session");
+const passport = require("./config/passport");
+const util = require("./util");
 const morgan = require("morgan");
-var app = express();
+const app = express();
 
 // Other settings
 app.set("view engine", "ejs");
