@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8">
+    <title>유저 페이지</title>
     <style>
       p {
         color: black;
@@ -45,6 +47,28 @@
         height: 1000px;
         background-color: rgb(229, 240, 250);
       }
+
+
+      .column {
+        float: left;
+        width: 50%;
+        height: 300px;
+        padding: 10px;
+      }
+      .column h2 {
+        margin-top: 0;
+      }
+      .task {
+        background-color: #f2f2f2;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        cursor: grab;
+      }
+      .task:active {
+        cursor: grabbing;
+      }
+
     </style>
     <%- include('./partials/head') %>
   </head>
@@ -53,14 +77,117 @@
     <div class="full_screen">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
-          <h2 class="pb-2 border-bottom">운동 계획을 공유하고 실천하세요!</h2>
-          <div class="search" style="width: 200px; height: 150px; float: left">
-            <p>
-              Fitbyte
-            </p>
-          </div>
+        <h2 class="pb-2 border-bottom">오늘 목표 운동 시간 ___분</h2>
+        <form method="POST" action="/time-promise">
+          <label>목표 운동 시간</label>
+            <input type="number" name="amount" min="1" max="1440" required>
+            분
+          <button type="submit">입력</button>
+        </form>
+
+        <div style="margin-bottom: 40px"></div>
+
+        <h2 class="pb-2 border-bottom">운동 약속</h2>
+          <div class="list-group">
+
+            <!--ADD-->
+            <label class="list-group-item d-flex gap-3 bg-body-tertiary">
+              <form id="add-task-form">
+                <input type="datetime-local" name="date" required>
+                <input type="number" name="amount" required>
+                <input type="text" name="contents" required>
+                <button type="submit" class="btn btn-primary">Add</button>
+              </form>
+            </label>
+
+
+
+          <script>
+            const addTaskForm = document.getElementById("add-task-form");
+            const taskList = document.querySelector(".list-group");
+          
+            addTaskForm.addEventListener("submit", async (event) => {
+              event.preventDefault();
+          
+              const formData = new FormData(event.target);
+              const response = await fetch("/self-promise", {
+                method: "POST",
+                body: formData,
+              });
+          
+              if (!response.ok) {
+                console.error("Failed to add task");
+                return;
+              }
+          
+              const task = await response.json();
+          
+              const taskItem = document.createElement("label");
+              taskItem.classList.add("list-group-item", "d-flex", "gap-3");
+              taskItem.innerHTML = `
+                <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
+                <span class="pt-1 form-checked-content">
+                  <strong>${task.contents}</strong>
+                  <small class="d-block text-body-secondary">
+                    <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"/></svg>
+                    ${task.date} for ${task.amount} minutes
+                  </small>
+                </span>
+              `;
+          
+              taskList.insertBefore(taskItem, addTaskForm.closest(".list-group-item"));
+              addTaskForm.reset();
+            });
+          </script>
+
         </div>
-      </div>
-    </div>
+
+
+          <div style="margin-bottom: 60px"></div>
+
+
+          <a href="URL" target="_blank" style="color: blue; font-size: 25px;">나의 헬스 데이터</a>
+
+
+          <div style="margin-bottom: 60px"></div>
+
+          <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
+        </div>
+
+
+        </div>
+      
+                <!-- <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+                  <h4>목표</h4>
+                  <div class="task" id="task1" draggable="true" ondragstart="drag(event)">
+                    <p>Task 1</p>
+                  </div>
+                  <div class="task" id="task2" draggable="true" ondragstart="drag(event)">
+                    <p>Task 2</p>
+                  </div>
+                  <div class="task" id="task3" draggable="true" ondragstart="drag(event)">
+                    <p>Task 3</p>
+                  </div>
+                </div>
+                <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+                  <h4>완료</h4>
+                  <div class="task" id="task4" draggable="true" ondragstart="drag(event)">
+                    <p>Task 4</p>
+                  </div>
+                  <div class="task" id="task5" draggable="true" ondragstart="drag(event)">
+                    <p>Task 5</p>
+                  </div>
+                </div> -->
+
+
+
+
+              </div>
+            </div>
+          </div>
+
   </body>
+  
+
+
 </html>
