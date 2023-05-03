@@ -77,13 +77,16 @@
     <div class="full_screen">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
-        <h2 class="pb-2 border-bottom">오늘 목표 운동 시간 ___분</h2>
+        <!-- <h2 class="pb-2 border-bottom">오늘 목표 운동 시간 <%= amount %>분</h2> -->
         <form method="POST" action="/time-promise">
           <label>목표 운동 시간</label>
             <input type="number" name="amount" min="1" max="1440" required>
             분
           <button type="submit">입력</button>
         </form>
+        <% if (amount) { %>
+          <p>목표 운동 시간 <%= Math.floor(amount/60) %>시간 <%= amount%60 %>분</p>
+        <% } %>
 
         <div style="margin-bottom: 40px"></div>
 
@@ -188,6 +191,5 @@
 
   </body>
   
-
 
 </html>
