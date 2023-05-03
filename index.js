@@ -37,7 +37,7 @@ app.use("/", require("./routes/home"));
 connectDB();
 
 // Port setting
-var port = 3000;
+var port = 8888;
 app.listen(port, function () {
   console.log("server on! http://localhost:" + port);
 });
