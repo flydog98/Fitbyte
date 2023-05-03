@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 // schema
 var userSchema = mongoose.Schema({
@@ -26,12 +26,6 @@ var userSchema = mongoose.Schema({
     match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,'Should be a vaild email address!'],
     trim:true
   },
-
-  favorites:{
-    type:[String],
-    trim:true
-  },
-
 },{
   toObject:{virtuals:true}
 });

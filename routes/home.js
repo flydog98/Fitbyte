@@ -1,12 +1,14 @@
-var express = require("express");
-var router = express.Router();
-var passport = require("../config/passport");
-var User = require('../models/user');
-var util = require('../util');
+const express = require("express");
+const router = express.Router();
+const passport = require("../config/passport");
+const User = require('../models/user');
+const TimePromise = require('../models/userTimePromise');
+const SelfPromise = require('../models/userSelfPromise');
+const util = require('../util');
 
 // Home
-router.get("/", function (req, res) {
-  res.render("home");
+router.get("/", util.isLoggedin, function (req, res) {
+  return res.redirect(`/${req.user.username}`);
 });
 
 // Login
@@ -17,6 +19,23 @@ router.get("/login", function (req, res) {
     username: username,
     errors: errors,
   });
+});
+
+// New
+router.get('/register', function(req, res){
+  var user = req.flash('user')[0] || {};
+  var errors = req.flash('errors')[0] || {};
+  res.render('register', { user:user, errors:errors });
+});
+
+router.get('/:username', function(req, res) {
+  return res.render('home', {user: req.params.username})
+});
+
+// Logout
+router.post("/logout", function (req, res) {
+  req.logout();
+  res.redirect("/");
 });
 
 // Post Login
@@ -44,25 +63,13 @@ router.post(
   },
 
   passport.authenticate("local-login", {
+    // successRedirect: "/",
     successRedirect: "/",
     failureRedirect: "/login",
   })
 );
 
-// Logout
-router.get("/logout", function (req, res) {
-  req.logout();
-  res.redirect("/");
-});
-
-// New
-router.get('/register', function(req, res){
-  var user = req.flash('user')[0] || {};
-  var errors = req.flash('errors')[0] || {};
-  res.render('register', { user:user, errors:errors });
-});
-
-// create
+// register user
 router.post('/register', function(req, res){
   User.create(req.body, function(err, user){
     if(err){
@@ -70,9 +77,36 @@ router.post('/register', function(req, res){
       req.flash('errors', util.parseError(err));
       return res.redirect('/register');
     }
-    res.redirect('/');
+    res.redirect('/login');
   });
 });
 
+router.post('/time-promise', async function(req, res) {
+  await TimePromise.create({
+    username: req.user.username,
+    amount: req.body.amount
+  }, function(err){
+    if(err){
+      req.flash('errors', util.parseError(err));
+      return res.redirect(`/${req.body.username}`);
+    }
+    res.redirect(`/${req.body.username}`);
+  });
+});
+
+router.post('/self-promise', async function(req, res) {
+  await SelfPromise.create({
+    username: req.user.username,
+    date: req.body.date,
+    amount: req.body.amount,
+    contents: req.body.contents
+  }, function(err){
+    if(err){
+      req.flash('errors', util.parseError(err));
+      return res.redirect(`/${req.body.username}`);
+    }
+    res.redirect(`/${req.body.username}`);
+  });
+});
 
 module.exports = router;
