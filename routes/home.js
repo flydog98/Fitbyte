@@ -7,8 +7,8 @@ const SelfPromise = require('../models/userSelfPromise');
 const util = require('../util');
 
 // Home
-router.get("/", function (req, res) {
-  return res.redirect("/login")
+router.get("/", util.isLoggedin, function (req, res) {
+  return res.redirect(`/${req.user.username}`);
 });
 
 // Login
@@ -29,7 +29,7 @@ router.get('/register', function(req, res){
 });
 
 router.get('/:username', function(req, res) {
-  return res.render('myPage', {user: req.params.username})
+  return res.render('home', {user: req.params.username})
 });
 
 // Logout
@@ -63,6 +63,7 @@ router.post(
   },
 
   passport.authenticate("local-login", {
+    // successRedirect: "/",
     successRedirect: "/",
     failureRedirect: "/login",
   })
@@ -76,12 +77,15 @@ router.post('/register', function(req, res){
       req.flash('errors', util.parseError(err));
       return res.redirect('/register');
     }
-    res.redirect('/');
+    res.redirect('/login');
   });
 });
 
 router.post('/time-promise', async function(req, res) {
-  await TimePromise.create(req.body, function(err){
+  await TimePromise.create({
+    username: req.user.username,
+    amount: req.body.amount
+  }, function(err){
     if(err){
       req.flash('errors', util.parseError(err));
       return res.redirect(`/${req.body.username}`);
@@ -91,7 +95,12 @@ router.post('/time-promise', async function(req, res) {
 });
 
 router.post('/self-promise', async function(req, res) {
-  await SelfPromise.create(req.body, function(err){
+  await SelfPromise.create({
+    username: req.user.username,
+    date: req.body.date,
+    amount: req.body.amount,
+    contents: req.body.contents
+  }, function(err){
     if(err){
       req.flash('errors', util.parseError(err));
       return res.redirect(`/${req.body.username}`);
