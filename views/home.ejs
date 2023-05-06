@@ -77,13 +77,16 @@
     <div class="full_screen">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
-        <h2 class="pb-2 border-bottom">오늘 목표 운동 시간 ___분</h2>
+        <!-- <h2 class="pb-2 border-bottom">오늘 목표 운동 시간 <%= amount %>분</h2> -->
         <form method="POST" action="/time-promise">
           <label>목표 운동 시간</label>
             <input type="number" name="amount" min="1" max="1440" required>
             분
           <button type="submit">입력</button>
         </form>
+        <% if (amount) { %>
+          <p>목표 운동 시간 <%= Math.floor(amount/60) %>시간 <%= amount%60 %>분</p>
+        <% } %>
 
         <div style="margin-bottom: 40px"></div>
 
@@ -99,8 +102,6 @@
                 <button type="submit" class="btn btn-primary">Add</button>
               </form>
             </label>
-
-
 
           <script>
             const addTaskForm = document.getElementById("add-task-form");
@@ -120,8 +121,7 @@
                 return;
               }
           
-              const task = await response.json();
-          
+              const task = await response.json();  
               const taskItem = document.createElement("label");
               taskItem.classList.add("list-group-item", "d-flex", "gap-3");
               taskItem.innerHTML = `
@@ -142,9 +142,7 @@
 
         </div>
 
-
           <div style="margin-bottom: 60px"></div>
-
 
           <a href="URL" target="_blank" style="color: blue; font-size: 25px;">나의 헬스 데이터</a>
 
@@ -153,41 +151,7 @@
 
           <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
         </div>
-
-
         </div>
-      
-                <!-- <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
-                  <h4>목표</h4>
-                  <div class="task" id="task1" draggable="true" ondragstart="drag(event)">
-                    <p>Task 1</p>
-                  </div>
-                  <div class="task" id="task2" draggable="true" ondragstart="drag(event)">
-                    <p>Task 2</p>
-                  </div>
-                  <div class="task" id="task3" draggable="true" ondragstart="drag(event)">
-                    <p>Task 3</p>
-                  </div>
-                </div>
-                <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
-                  <h4>완료</h4>
-                  <div class="task" id="task4" draggable="true" ondragstart="drag(event)">
-                    <p>Task 4</p>
-                  </div>
-                  <div class="task" id="task5" draggable="true" ondragstart="drag(event)">
-                    <p>Task 5</p>
-                  </div>
-                </div> -->
-
-
-
-
-              </div>
-            </div>
-          </div>
-
+      </div>
   </body>
-  
-
-
 </html>
