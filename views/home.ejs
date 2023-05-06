@@ -77,15 +77,18 @@
     <div class="full_screen">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
-        <!-- <h2 class="pb-2 border-bottom">오늘 목표 운동 시간 <%= amount %>분</h2> -->
         <form method="POST" action="/time-promise">
-          <label>목표 운동 시간</label>
+          <h2 class="pb-2 border-bottom">목표 운동 시간</h2>
+            <label>목표 시간: </label>
             <input type="number" name="amount" min="1" max="1440" required>
             분
           <button type="submit">입력</button>
         </form>
-        <% if (amount) { %>
-          <p>목표 운동 시간 <%= Math.floor(amount/60) %>시간 <%= amount%60 %>분</p>
+
+        <% if (todayTimePromise && todayTimePromise.amount != null) { %>
+          <p><%= Math.floor(todayTimePromise.amount/60) %>시간 <%= todayTimePromise.amount%60 %>분</p>
+        <% } else { %>
+          <p>목표 운동 시간을 설정해주세요.</p>
         <% } %>
 
         <div style="margin-bottom: 40px"></div>
@@ -104,6 +107,28 @@
             </label>
 
           <script>
+          const formElement = document.querySelector('#add-task-form');
+          formElement.addEventListener('submit', function (event) {
+          event.preventDefault();
+          const amountInput = formElement.querySelector('input[name="amount"]');
+          const amount = amountInput.value ? parseInt(amountInput.value, 10) : null;
+          fetch('/time-promise', {
+          method: 'POST',
+          body: JSON.stringify({ amount }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data && data.amount !== null) {
+              const amountElement = document.createElement('p');
+              amountElement.innerHTML = `목표 운동 시간 ${Math.floor(data.amount/60)}시간 ${data.amount%60}분`;
+              document.querySelector('#icon-grid').appendChild(amountElement);
+            }
+          });
+        });
+
             const addTaskForm = document.getElementById("add-task-form");
             const taskList = document.querySelector(".list-group");
           
