@@ -1,5 +1,6 @@
 const express = require("express");
 const connectDB = require("./config/db");
+const listenMQTT = require("./mqtt/sensor")
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const flash = require("connect-flash");
@@ -34,6 +35,7 @@ app.use(function (req, res, next) {
 // Routes
 app.use("/", require("./routes/home"));
 
+listenMQTT();
 connectDB();
 
 // Port setting

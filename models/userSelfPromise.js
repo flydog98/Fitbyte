@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 var userSelfPromiseSchema = mongoose.Schema({
   username: {
@@ -15,7 +15,7 @@ var userSelfPromiseSchema = mongoose.Schema({
   },
   contents: {
     type: String,
-    maxLength: 255
+    maxLength: 255,
   },
   achieved: {
     type: Boolean,
@@ -23,9 +23,9 @@ var userSelfPromiseSchema = mongoose.Schema({
   },
   deleted: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
-var userSelfPromise = mongoose.model('userSelfPromise', userSelfPromiseSchema);
+var userSelfPromise = mongoose.model("userSelfPromise", userSelfPromiseSchema);
 module.exports = userSelfPromise;
