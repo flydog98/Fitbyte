@@ -1,13 +1,14 @@
-var express = require("express");
+const express = require("express");
 const connectDB = require("./config/db");
-var bodyParser = require("body-parser");
-var methodOverride = require("method-override");
-var flash = require("connect-flash");
-var session = require("express-session");
-var passport = require("./config/passport");
-var util = require("./util");
+const listenMQTT = require("./mqtt/sensor")
+const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
+const flash = require("connect-flash");
+const session = require("express-session");
+const passport = require("./config/passport");
+const util = require("./util");
 const morgan = require("morgan");
-var app = express();
+const app = express();
 
 // Other settings
 app.set("view engine", "ejs");
@@ -34,10 +35,11 @@ app.use(function (req, res, next) {
 // Routes
 app.use("/", require("./routes/home"));
 
+listenMQTT();
 connectDB();
 
 // Port setting
-var port = 3000;
+var port = 8888;
 app.listen(port, function () {
   console.log("server on! http://localhost:" + port);
 });
