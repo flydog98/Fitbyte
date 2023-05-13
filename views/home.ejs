@@ -66,6 +66,33 @@
       .task:active {
         cursor: grabbing;
       }
+
+      .list-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-group-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.list-group-item input {
+  margin-right: 10px;
+}
+
+.list-group-item strong {
+  font-weight: bold;
+}
+
+.list-group-item small {
+  color: #888;
+}
+
+
+
     </style>
     <%- include('./partials/head') %>
   </head>
@@ -105,6 +132,9 @@
               </form>
             </label>
             </div>
+        </div>
+        </div>
+        </div>
 
             <script>
               const timePromiseForm = document.querySelector("#icon-grid form[action='/time-promise']");
@@ -130,7 +160,6 @@
         }
       });
   });
-
 
               const addTaskForm = document.getElementById("add-task-form");
 
@@ -171,8 +200,6 @@
                 addTaskForm.reset();
               });
             </script>
-          </div>
-
           <div style="margin-bottom: 60px"></div>
 
           <a
@@ -184,8 +211,5 @@
           <div style="margin-bottom: 60px"></div>
 
           <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
-        </div>
-      </div>
-    </div>
   </body>
 </html>
