@@ -66,6 +66,33 @@
       .task:active {
         cursor: grabbing;
       }
+
+      .list-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-group-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.list-group-item input {
+  margin-right: 10px;
+}
+
+.list-group-item strong {
+  font-weight: bold;
+}
+
+.list-group-item small {
+  color: #888;
+}
+
+
+
     </style>
     <%- include('./partials/head') %>
   </head>
@@ -104,43 +131,41 @@
                 <button type="submit" class="btn btn-primary">Add</button>
               </form>
             </label>
+            </div>
+        </div>
+        </div>
+        </div>
 
             <script>
-              const formElement = document.querySelector("#add-task-form");
-              formElement.addEventListener("submit", function (event) {
-                event.preventDefault();
-                const amountInput = formElement.querySelector(
-                  'input[name="amount"]'
-                );
-                const amount = amountInput.value
-                  ? parseInt(amountInput.value, 10)
-                  : null;
-                fetch("/time-promise", {
-                  method: "POST",
-                  body: JSON.stringify({ amount }),
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                })
-                  .then((response) => response.json())
-                  .then((data) => {
-                    if (data && data.amount !== null) {
-                      const amountElement = document.createElement("p");
-                      amountElement.innerHTML = `목표 운동 시간 ${Math.floor(
-                        data.amount / 60
-                      )}시간 ${data.amount % 60}분`;
-                      document
-                        .querySelector("#icon-grid")
-                        .appendChild(amountElement);
-                    }
-                  });
-              });
+              const timePromiseForm = document.querySelector("#icon-grid form[action='/time-promise']");
+  timePromiseForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const amountInput = timePromiseForm.querySelector('input[name="amount"]');
+    const amount = amountInput.value ? parseInt(amountInput.value, 10) : null;
+    fetch("/time-promise", {
+      method: "POST",
+      body: JSON.stringify({ amount }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.amount !== null) {
+          const amountElement = document.createElement("p");
+          amountElement.innerHTML = `목표 운동 시간 ${Math.floor(data.amount / 60)}시간 ${
+            data.amount % 60
+          }분`;
+          document.querySelector("#icon-grid").appendChild(amountElement);
+        }
+      });
+  });
 
               const addTaskForm = document.getElementById("add-task-form");
-              const taskList = document.querySelector(".list-group");
 
               addTaskForm.addEventListener("submit", async (event) => {
                 event.preventDefault();
+
 
                 const formData = new FormData(event.target);
                 const response = await fetch("/self-promise", {
@@ -167,6 +192,7 @@
                 </span>
               `;
 
+              const taskList = document.querySelector(".list-group");
                 taskList.insertBefore(
                   taskItem,
                   addTaskForm.closest(".list-group-item")
@@ -174,22 +200,16 @@
                 addTaskForm.reset();
               });
             </script>
-          </div>
-
           <div style="margin-bottom: 60px"></div>
 
           <a
             href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
             target="_blank"
             style="color: blue; font-size: 25px"
-            >나의 헬스 데이터</a
-          >
+            >나의 헬스 데이터</a>
 
           <div style="margin-bottom: 60px"></div>
 
           <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
-        </div>
-      </div>
-    </div>
   </body>
 </html>
