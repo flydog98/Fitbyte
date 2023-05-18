@@ -132,6 +132,14 @@
               </form>
             </label>
             </div>
+
+
+            <form id="add-task-form">
+              <input type="text" name="date" id="date-input" placeholder="날짜">
+              <input type="text" name="amount" id="amount-input" placeholder="시간">
+              <input type="text" name="contents" id="contents-input" placeholder="내용">
+              <button type="submit">추가</button>
+            </form>
         </div>
         </div>
         </div>
@@ -171,6 +179,8 @@
                 const response = await fetch("/self-promise", {
                   method: "POST",
                   body: formData,
+                  headers: {
+                    "Content-Type": "multipart/form-data"}
                 });
 
                 if (!response.ok) {
@@ -179,6 +189,11 @@
                 }
 
                 const task = await response.json();
+                displayTask(task);
+                addTaskForm.reset()
+
+
+
                 const taskItem = document.createElement("label");
                 taskItem.classList.add("list-group-item", "d-flex", "gap-3");
                 taskItem.innerHTML = `
@@ -199,6 +214,7 @@
                 );
                 addTaskForm.reset();
               });
+
             </script>
           <div style="margin-bottom: 60px"></div>
 
