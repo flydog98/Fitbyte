@@ -68,31 +68,28 @@
       }
 
       .list-group {
-  display: flex;
-  flex-direction: column;
-}
+        display: flex;
+        flex-direction: column;
+      }
 
-.list-group-item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-}
+      .list-group-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+      }
 
-.list-group-item input {
-  margin-right: 10px;
-}
+      .list-group-item input {
+        margin-right: 10px;
+      }
 
-.list-group-item strong {
-  font-weight: bold;
-}
+      .list-group-item strong {
+        font-weight: bold;
+      }
 
-.list-group-item small {
-  color: #888;
-}
-
-
-
+      .list-group-item small {
+        color: #888;
+      }
     </style>
     <%- include('./partials/head') %>
   </head>
@@ -110,10 +107,10 @@
           </form>
 
           <% if (todayTimePromise && todayTimePromise.amount != null) { %>
-          <p>
+          <div>
             <%= Math.floor(todayTimePromise.amount/60) %>시간 <%=
             todayTimePromise.amount%60 %>분
-          </p>
+          </div>
           <% } else { %>
           <p>목표 운동 시간을 설정해주세요.</p>
           <% } %>
@@ -124,108 +121,47 @@
           <div class="list-group">
             <!--ADD-->
             <label class="list-group-item d-flex gap-3 bg-body-tertiary">
-              <form id="add-task-form">
+              <form id="add-task-form" action="/self-promise" method="post">
                 <input type="datetime-local" name="date" required />
                 <input type="number" name="amount" required />
                 <input type="text" name="contents" required />
                 <button type="submit" class="btn btn-primary">Add</button>
               </form>
             </label>
-            </div>
-
-
-            <form id="add-task-form">
-              <input type="text" name="date" id="date-input" placeholder="날짜">
-              <input type="text" name="amount" id="amount-input" placeholder="시간">
-              <input type="text" name="contents" id="contents-input" placeholder="내용">
-              <button type="submit">추가</button>
-            </form>
+            <table>
+              <tr>
+                <td>번호</td>
+                <td>일시</td>
+                <td>목표 시간</td>
+                <td>운동 내용</td>
+                <td>달성 여부</td>
+              </tr>
+              <% for(var i = 0; i < selfPromises.length; i++) { var data =
+              selfPromises[i]; %>
+              <tr>
+                <td><%=i + 1%></td>
+                <td><%=data.date%></td>
+                <td><%=data.amount%></td>
+                <td><%=data.contents%></td>
+                <td><%=data.achieved%></td>
+              </tr>
+              <% } %>
+            </table>
+          </div>
         </div>
-        </div>
-        </div>
+      </div>
+    </div>
+    <div style="margin-bottom: 60px"></div>
 
-            <script>
-              const timePromiseForm = document.querySelector("#icon-grid form[action='/time-promise']");
-  timePromiseForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    const amountInput = timePromiseForm.querySelector('input[name="amount"]');
-    const amount = amountInput.value ? parseInt(amountInput.value, 10) : null;
-    fetch("/time-promise", {
-      method: "POST",
-      body: JSON.stringify({ amount }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.amount !== null) {
-          const amountElement = document.createElement("p");
-          amountElement.innerHTML = `목표 운동 시간 ${Math.floor(data.amount / 60)}시간 ${
-            data.amount % 60
-          }분`;
-          document.querySelector("#icon-grid").appendChild(amountElement);
-        }
-      });
-  });
+    <a
+      href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
+      target="_blank"
+      style="color: blue; font-size: 25px"
+      >나의 헬스 데이터</a
+    >
 
-              const addTaskForm = document.getElementById("add-task-form");
+    <div style="margin-bottom: 60px"></div>
 
-              addTaskForm.addEventListener("submit", async (event) => {
-                event.preventDefault();
-
-
-                const formData = new FormData(event.target);
-                const response = await fetch("/self-promise", {
-                  method: "POST",
-                  body: formData,
-                  headers: {
-                    "Content-Type": "multipart/form-data"}
-                });
-
-                if (!response.ok) {
-                  console.error("Failed to add task");
-                  return;
-                }
-
-                const task = await response.json();
-                displayTask(task);
-                addTaskForm.reset()
-
-
-
-                const taskItem = document.createElement("label");
-                taskItem.classList.add("list-group-item", "d-flex", "gap-3");
-                taskItem.innerHTML = `
-                <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
-                <span class="pt-1 form-checked-content">
-                  <strong>${task.contents}</strong>
-                  <small class="d-block text-body-secondary">
-                    <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"/></svg>
-                    ${task.date} for ${task.amount} minutes
-                  </small>
-                </span>
-              `;
-
-              const taskList = document.querySelector(".list-group");
-                taskList.insertBefore(
-                  taskItem,
-                  addTaskForm.closest(".list-group-item")
-                );
-                addTaskForm.reset();
-              });
-
-            </script>
-          <div style="margin-bottom: 60px"></div>
-
-          <a
-            href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
-            target="_blank"
-            style="color: blue; font-size: 25px"
-            >나의 헬스 데이터</a>
-
-          <div style="margin-bottom: 60px"></div>
-
-          <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
+    <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
   </body>
 </html>
