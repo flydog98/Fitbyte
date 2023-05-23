@@ -18,7 +18,6 @@ const listenMQTT = () => {
   client.subscribe("fitByte/pmten");
 
   client.on("message", function (topic, message) {
-    console.log(`토픽: ${topic.toString()}, 메시지: ${message.toString()}`);
     SensorLog.create(
       {
         type: topic,
