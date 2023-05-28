@@ -165,5 +165,8 @@ uploadedFiles
 
 *secret.json
 s3.js
+
+.env
+
 # map files
 mapPictures*

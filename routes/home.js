@@ -7,6 +7,18 @@ const TimePromise = require("../models/userTimePromise");
 const SelfPromise = require("../models/userSelfPromise");
 const util = require("../util");
 
+// 프론트에 환경변수 넘겨주기 위함
+const dotenv = require('dotenv');
+dotenv.config();
+
+// API 엔드포인트 추가
+router.get("/api/config", function (req, res) {
+  res.json({
+    clientId: process.env.FITBIT_CLIENT_ID,
+    clientSecret: process.env.FITBIT_CLIENT_SECRET
+  });
+});
+
 // Home
 router.get("/", util.isLoggedin, function (req, res) {
   return res.redirect(`/${req.user.username}`);
@@ -101,6 +113,21 @@ router.post("/register", function (req, res) {
     res.redirect("/login");
   });
 });
+
+
+// Fitbit OAuth Authentication
+// 액티비티, 위치 가져옴
+router.get("/fitbit/auth", passport.authenticate("fitbit", { scope: ['activity', 'location'] }));
+
+// Fitbit OAuth Callback
+router.get(
+  "/fitbit/callback",
+  passport.authenticate("fitbit", { failureRedirect: "/login" }),
+  function (req, res) {
+    // 인증 성공 후 로직 작성할 것 - 액티비티(운동시간)
+    res.redirect("/");
+  }
+);
 
 router.post("/time-promise", async function (req, res) {
   await TimePromise.create(
