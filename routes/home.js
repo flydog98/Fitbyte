@@ -120,23 +120,19 @@ router.post("/time-promise", async function (req, res) {
 
 router.post("/self-promise", async function (req, res) {
 
-  // const { date, amount, contents } = req.body;
   await SelfPromise.create(
     {
       username: req.user.username,
       date: req.body.date,
       amount: req.body.amount,
       contents: req.body.contents,
-      // username: req.user.username,
-      // date: new Date(date),
-      // amount: parseFloat(amount),
-      // contents: contents,
     },
     function (err) {
       if (err) {
         req.flash("errors", util.parseError(err));
         return res.redirect(`/${req.body.username}`);
       }
+      console.log(data)
       res.redirect(`/${req.user.username}`);
     }
   );
