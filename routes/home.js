@@ -116,11 +116,11 @@ router.post("/register", function (req, res) {
 
 
 // Fitbit OAuth Authentication
-// 액티비티, 위치 가져옴
+// 액티비티, 위치 정보
 router.get("/fitbit/auth", passport.authenticate("fitbit", { scope: ['activity', 'location'] }));
 
 // Fitbit OAuth Callback
-router.get(
+router.post(
   "/fitbit/callback",
   passport.authenticate("fitbit", { failureRedirect: "/login" }),
   function (req, res) {
@@ -128,6 +128,7 @@ router.get(
     res.redirect("/");
   }
 );
+
 
 router.post("/time-promise", async function (req, res) {
   await TimePromise.create(

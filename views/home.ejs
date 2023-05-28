@@ -192,15 +192,14 @@
   // 페이지 로드 시 환경 변수 값을 가져오는 함수 호출
   window.onload = fetchConfig;
 
-
   // OAuth 관련
-    // URL에서 인증 코드를 추출
+    // URL에서 인증 코드 추출
     function extractAuthorizationCode() {
       const urlParams = new URLSearchParams(window.location.search);
       const authorizationCode = urlParams.get('code');
       
       // 서버로 인증 코드 전송
-      fetch('/callback', {
+      fetch('/fitbit/callback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
