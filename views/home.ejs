@@ -16,9 +16,8 @@
         border-radius: 1.5rem;
         margin-right: 15px;
       }
-      .full_screen {
+      .aliceblue-background {
         background-color: aliceblue;
-        height: 1000px;
       }
       .search {
         color: rgb(15, 150, 150);
@@ -95,85 +94,134 @@
   </head>
   <body>
     <%- include('./partials/nav') %>
-    <div class="full_screen">
+    <div class="aliceblue-background">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
-          <form method="POST" action="/time-promise">
+          <div class="list-group">
             <h2 class="pb-2 border-bottom">목표 운동 시간</h2>
-            <label>목표 시간: </label>
-            <input type="number" name="amount" min="1" max="1440" required />
-            분
-            <button type="submit">입력</button>
-          </form>
-
-          <% if (todayTimePromise && todayTimePromise.amount != null) { %>
-          <div>
-            <%= Math.floor(todayTimePromise.amount/60) %>시간 <%=
-            todayTimePromise.amount%60 %>분
-            <form action="/time-promise?_method=delete" method="post">
-              <input type="hidden" name="_id" value=<%=todayTimePromise._id%> >
-              <button type="submit">삭제</button>
+            <% if (todayTimePromise && todayTimePromise.amount != null) { %>
+            <div>
+              오늘의 목표 시간: 
+              <%= Math.floor(todayTimePromise.amount/60) %>시간 <%=
+              todayTimePromise.amount%60 %>분
+            </div>
+            <% } else { %>
+            <div>오늘의 목표 운동 시간을 설정해주세요.</div>
+            <form method="POST" action="/time-promise">
+              <label>목표 시간: </label>
+              <input type="number" name="amount" min="1" max="1440" required />
+              분
+              <button type="submit">입력</button>
             </form>
+            <% } %>
+            <% if (timePromises.length != 0) { %>
+            <table class="table table-light table-striped table-bordered">
+              <caption>검증은 매일 새벽에 이뤄집니다</caption>
+              <thead>
+                <tr>
+                  <td>번호</td>
+                  <td>일시</td>
+                  <td>목표 시간</td>
+                  <td>달성 여부</td>
+                  <td>제어</td>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(var i = 0; i < timePromises.length; i++) { var data =
+                timePromises[i]; %>
+                <tr>
+                  <td><%=i + 1%></td>
+                  <td><%=moment(data.date).format("YYYY-MM-DD")%></td>
+                  <td><%=data.amount%></td>
+                  <td><%=data.achieved%></td>
+                  <td>
+                    <form action="/time-promise?_method=delete" method="post">
+                      <input type="hidden" name="_id" value=
+                      <%=data._id%>
+                      >
+                      <button type="submit">삭제</button>
+                    </form>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <% }%>
           </div>
-          <% } else { %>
-          <div>목표 운동 시간을 설정해주세요.</div>
-          <% } %>
 
           <div style="margin-bottom: 40px"></div>
 
           <h2 class="pb-2 border-bottom">운동 약속</h2>
           <div class="list-group">
             <!--ADD-->
-            <label class="list-group-item d-flex gap-3 bg-body-tertiary">
+            <label>
               <form id="add-task-form" action="/self-promise" method="post">
-                <input type="datetime-local" name="date" required />
-                <input type="number" name="amount" required />
-                <input type="text" name="contents" required />
-                <button type="submit" class="btn btn-primary">Add</button>
+                <div>
+                  <label>날짜 : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label>
+                  <input type="datetime-local" name="date" required />
+                </div>
+                <div>
+                  <label>목표 시간: </label>
+                  <input type="number" name="amount" required />
+                </div>
+                <div>
+                  <label>운동 내용: </label>
+                  <input type="text" name="contents" required />
+                  <button type="submit">추가</button>
+                </div>
               </form>
             </label>
-            <table>
-              <tr>
-                <td>번호</td>
-                <td>일시</td>
-                <td>목표 시간</td>
-                <td>운동 내용</td>
-                <td>달성 여부</td>
-                <td></td>
-              </tr>
-              <% for(var i = 0; i < selfPromises.length; i++) { var data =
-              selfPromises[i]; %>
-              <tr>
-                <td><%=i + 1%></td>
-                <td><%=data.date%></td>
-                <td><%=data.amount%></td>
-                <td><%=data.contents%></td>
-                <td><%=data.achieved%></td>
-                <td>
-                  <form action="/self-promise?_method=patch" method="post">
-                    <input type="hidden" name="_id" value=<%=data._id%> >
-                    <button type="submit">달성</button>
-                  </form>
-                  <form action="/self-promise?_method=delete" method="post">
-                    <input type="hidden" name="_id" value=<%=data._id%> >
-                    <button type="submit">삭제</button>
-                  </form>
-                </td>
-              </tr>
-              <% } %>
+            <% if (selfPromises.length != 0) { %>
+            <table class="table table-light table-striped table-bordered">
+              <thead>
+                <tr>
+                  <td>번호</td>
+                  <td>일시</td>
+                  <td>목표 시간</td>
+                  <td>운동 내용</td>
+                  <td>달성 여부</td>
+                  <td>제어</td>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(var i = 0; i < selfPromises.length; i++) { var data =
+                selfPromises[i]; %>
+                <tr>
+                  <td><%=i + 1%></td>
+                  <td><%=moment(data.date).format("YYYY-MM-DD HH:mm")%></td>
+                  <td><%=data.amount%></td>
+                  <td><%=data.contents%></td>
+                  <td><%=data.achieved%></td>
+                  <td>
+                    <form action="/self-promise?_method=patch" method="post">
+                      <input type="hidden" name="_id" value=
+                      <%=data._id%>
+                      >
+                      <button type="submit">달성</button>
+                    </form>
+                    <form action="/self-promise?_method=delete" method="post">
+                      <input type="hidden" name="_id" value=<%=data._id%> >
+                      <button type="submit">삭제</button>
+                    </form>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
             </table>
+            <% } %>
           </div>
 
-          <div style="margin-bottom: 60px"></div>
+          <div style="margin-bottom: 40px"></div>
 
+          <h2 class="pb-2 border-bottom">FitByte 수집 데이터</h2>
           <a
             href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
             target="_blank"
             style="color: blue; font-size: 25px"
-            >나의 헬스 데이터</a
+            >link</a
           >
 
-          <div style="margin-bottom: 60px"></div>
+          <div style="margin-bottom: 40px"></div>
 
           <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
         </div>
