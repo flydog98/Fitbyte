@@ -110,9 +110,13 @@
           <div>
             <%= Math.floor(todayTimePromise.amount/60) %>시간 <%=
             todayTimePromise.amount%60 %>분
+            <form action="/time-promise?_method=delete" method="post">
+              <input type="hidden" name="_id" value=<%=todayTimePromise._id%> >
+              <button type="submit">삭제</button>
+            </form>
           </div>
           <% } else { %>
-          <p>목표 운동 시간을 설정해주세요.</p>
+          <div>목표 운동 시간을 설정해주세요.</div>
           <% } %>
 
           <div style="margin-bottom: 40px"></div>
@@ -135,6 +139,7 @@
                 <td>목표 시간</td>
                 <td>운동 내용</td>
                 <td>달성 여부</td>
+                <td></td>
               </tr>
               <% for(var i = 0; i < selfPromises.length; i++) { var data =
               selfPromises[i]; %>
@@ -144,24 +149,35 @@
                 <td><%=data.amount%></td>
                 <td><%=data.contents%></td>
                 <td><%=data.achieved%></td>
+                <td>
+                  <form action="/self-promise?_method=patch" method="post">
+                    <input type="hidden" name="_id" value=<%=data._id%> >
+                    <button type="submit">달성</button>
+                  </form>
+                  <form action="/self-promise?_method=delete" method="post">
+                    <input type="hidden" name="_id" value=<%=data._id%> >
+                    <button type="submit">삭제</button>
+                  </form>
+                </td>
               </tr>
               <% } %>
             </table>
           </div>
+
+          <div style="margin-bottom: 60px"></div>
+
+          <a
+            href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
+            target="_blank"
+            style="color: blue; font-size: 25px"
+            >나의 헬스 데이터</a
+          >
+
+          <div style="margin-bottom: 60px"></div>
+
+          <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
         </div>
       </div>
     </div>
-    <div style="margin-bottom: 60px"></div>
-
-    <a
-      href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
-      target="_blank"
-      style="color: blue; font-size: 25px"
-      >나의 헬스 데이터</a
-    >
-
-    <div style="margin-bottom: 60px"></div>
-
-    <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
   </body>
 </html>
