@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const moment = require('moment');
+const moment = require("moment");
 const passport = require("../config/passport");
 const User = require("../models/user");
 const TimePromise = require("../models/userTimePromise");
@@ -32,22 +32,22 @@ router.get("/register", function (req, res) {
 router.get("/:username", util.isLoggedin, async function (req, res) {
   // user 없을 때 방어 로직
 
-  const today = moment().startOf('day');
+  const today = moment().startOf("day");
   var todayTimePromise = await TimePromise.findOne({
     username: req.params.username,
     date: {
-      $gte: today.toDate()
-    }
+      $gte: today.toDate(),
+    },
   });
 
   var selfPromises = await SelfPromise.find({
-    username: req.params.username
-  })
+    username: req.params.username,
+  });
 
   return res.render("home", {
     user: req.params.username,
     todayTimePromise: todayTimePromise,
-    selfPromises: selfPromises
+    selfPromises: selfPromises,
   });
 });
 
@@ -129,11 +129,78 @@ router.post("/self-promise", async function (req, res) {
     function (err) {
       if (err) {
         req.flash("errors", util.parseError(err));
-        return res.redirect(`/${req.body.username}`);
+        return res.redirect(`/${req.user.username}`);
       }
       res.redirect(`/${req.user.username}`);
     }
   );
+});
+
+router.patch("/self-promise", async function (req, res) {
+  await SelfPromise.updateOne(
+    { _id: req.body._id },
+    {
+      achieved: true,
+    },
+    function (err) {
+      if (err) {
+        req.flash("errors", util.parseError(err));
+        return res.redirect(`/${req.user.username}`);
+      }
+      res.redirect(`/${req.user.username}`);
+    }
+  )
+    .clone()
+    .catch(function (err) {
+      console.log(err);
+    });
+});
+
+// router.patch("/self-promise", async function (req, res) {
+//   await SelfPromise.updateOne(
+//     { _id: req.body._id },
+//     {
+//       date: req.body.date,
+//       amount: req.body.amount,
+//       contents: req.body.contents,
+//       achieve: req.body.achieve,
+//     },
+//     function (err) {
+//       if (err) {
+//         req.flash("errors", util.parseError(err));
+//         return res.redirect(`/${req.user.username}`);
+//       }
+//       res.redirect(`/${req.user.username}`);
+//     }
+//   );
+// });
+
+router.delete("/time-promise", async function (req, res) {
+  await TimePromise.findOneAndDelete(req.body._id, function (err) {
+    if (err) {
+      req.flash("errors", util.parseError(err));
+      return res.redirect(`/${req.user.username}`);
+    }
+    res.redirect(`/${req.user.username}`);
+  })
+    .clone()
+    .catch(function (err) {
+      console.log(err);
+    });
+});
+
+router.delete("/self-promise", async function (req, res) {
+  await SelfPromise.findOneAndDelete(req.body._id, function (err) {
+    if (err) {
+      req.flash("errors", util.parseError(err));
+      return res.redirect(`/${req.user.username}`);
+    }
+    res.redirect(`/${req.user.username}`);
+  })
+    .clone()
+    .catch(function (err) {
+      console.log(err);
+    });
 });
 
 module.exports = router;
