@@ -40,14 +40,20 @@ router.get("/:username", util.isLoggedin, async function (req, res) {
     },
   });
 
+  var timePromises = await TimePromise.find({
+    username: req.params.username,
+  }).sort({ date: -1 });
+
   var selfPromises = await SelfPromise.find({
     username: req.params.username,
-  });
+  }).sort({ date: -1 });
 
   return res.render("home", {
     user: req.params.username,
     todayTimePromise: todayTimePromise,
+    timePromises: timePromises,
     selfPromises: selfPromises,
+    moment,
   });
 });
 
