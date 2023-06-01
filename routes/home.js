@@ -315,9 +315,14 @@ router.get("/gym-search", (req, res) => {
 
       //// 결과를 JSON 형식으로 반환
       const csvResult = { locations, gyms: limitedGymNames };
-      //const csvResult = { locations, gyms: gymNames };
-      // 두 개의 결과를 합쳐서 JSON 형식으로 반환
-      const mergedResult = { gymResult, csvResult };
+      const resultJson = { locationname, mntn_nm };
+
+      // Create a merged result object
+      const mergedResult = {
+        locationname: resultJson.locationname,
+        mntn_nm: resultJson.mntn_nm,
+        gyms: csvResult.gyms
+      };
       res.json(mergedResult);
     }
   );
