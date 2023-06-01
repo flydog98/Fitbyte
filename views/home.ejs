@@ -1,100 +1,110 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <style>
-      p {
-        color: black;
-        border-width: 8px;
-        border-style: solid;
-        border-color: rgb(241, 248, 213);
-        padding: 15px;
-        background-color: rgb(245, 248, 228);
-        /* 축약형 */
-        border: 5px solid rgba(82, 99, 116, 0);
-        height: 400px;
-        border-radius: 1.5rem;
-        margin-right: 15px;
-      }
-      .full_screen {
-        background-color: aliceblue;
-        height: 1000px;
-      }
-      .search {
-        color: rgb(15, 150, 150);
-      }
-      img {
-        width: 600px;
-        height: 400px;
-      }
-      .d-flex {
-        margin-left: 15px;
-        width: 450px;
-      }
-      .navbar-brand {
-        margin-left: 350px;
-      }
 
-      Text {
-        font-size: 35px;
-        font-weight: bold;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    p {
+      color: black;
+      border-width: 8px;
+      border-style: solid;
+      border-color: rgb(241, 248, 213);
+      padding: 15px;
+      background-color: rgb(245, 248, 228);
+      /* 축약형 */
+      border: 5px solid rgba(82, 99, 116, 0);
+      height: 400px;
+      border-radius: 1.5rem;
+      margin-right: 15px;
+    }
 
-      .add {
-        margin-top: 400px;
-        width: 2000px;
-        height: 1000px;
-        background-color: rgb(229, 240, 250);
-      }
+    .full_screen {
+      background-color: aliceblue;
+      height: 1000px;
+    }
 
-      .column {
-        float: left;
-        width: 50%;
-        height: 300px;
-        padding: 10px;
-      }
-      .column h2 {
-        margin-top: 0;
-      }
-      .task {
-        background-color: #f2f2f2;
-        border: 1px solid #ddd;
-        padding: 10px;
-        margin-bottom: 10px;
-        cursor: grab;
-      }
-      .task:active {
-        cursor: grabbing;
-      }
+    .search {
+      color: rgb(15, 150, 150);
+    }
 
-      .list-group {
-        display: flex;
-        flex-direction: column;
-      }
+    img {
+      width: 600px;
+      height: 400px;
+    }
 
-      .list-group-item {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        border-bottom: 1px solid #ccc;
-      }
+    .d-flex {
+      margin-left: 15px;
+      width: 450px;
+    }
 
-      .list-group-item input {
-        margin-right: 10px;
-      }
+    .navbar-brand {
+      margin-left: 350px;
+    }
 
-      .list-group-item strong {
-        font-weight: bold;
-      }
+    Text {
+      font-size: 35px;
+      font-weight: bold;
+    }
 
-      .list-group-item small {
-        color: #888;
-      }
-    </style>
-    <%- include('./partials/head') %>
-  </head>
-  <body>
-    <%- include('./partials/nav') %>
+    .add {
+      margin-top: 400px;
+      width: 2000px;
+      height: 1000px;
+      background-color: rgb(229, 240, 250);
+    }
+
+    .column {
+      float: left;
+      width: 50%;
+      height: 300px;
+      padding: 10px;
+    }
+
+    .column h2 {
+      margin-top: 0;
+    }
+
+    .task {
+      background-color: #f2f2f2;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      cursor: grab;
+    }
+
+    .task:active {
+      cursor: grabbing;
+    }
+
+    .list-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .list-group-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .list-group-item input {
+      margin-right: 10px;
+    }
+
+    .list-group-item strong {
+      font-weight: bold;
+    }
+
+    .list-group-item small {
+      color: #888;
+    }
+  </style>
+  <%- include('./partials/head') %>
+</head>
+
+<body>
+  <%- include('./partials/nav') %>
     <div class="full_screen">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
@@ -106,62 +116,76 @@
             <button type="submit">입력</button>
           </form>
 
-          <% if (todayTimePromise && todayTimePromise.amount != null) { %>
-          <div>
-            <%= Math.floor(todayTimePromise.amount/60) %>시간 <%=
-            todayTimePromise.amount%60 %>분
-          </div>
-          <% } else { %>
-          <p>목표 운동 시간을 설정해주세요.</p>
-          <% } %>
-
-          <div style="margin-bottom: 40px"></div>
-
-          <h2 class="pb-2 border-bottom">운동 약속</h2>
-          <div class="list-group">
-            <!--ADD-->
-            <label class="list-group-item d-flex gap-3 bg-body-tertiary">
-              <form id="add-task-form" action="/self-promise" method="post">
-                <input type="datetime-local" name="date" required />
-                <input type="number" name="amount" required />
-                <input type="text" name="contents" required />
-                <button type="submit" class="btn btn-primary">Add</button>
-              </form>
-            </label>
-            <table>
-              <tr>
-                <td>번호</td>
-                <td>일시</td>
-                <td>목표 시간</td>
-                <td>운동 내용</td>
-                <td>달성 여부</td>
-              </tr>
-              <% for(var i = 0; i < selfPromises.length; i++) { var data =
-              selfPromises[i]; %>
-              <tr>
-                <td><%=i + 1%></td>
-                <td><%=data.date%></td>
-                <td><%=data.amount%></td>
-                <td><%=data.contents%></td>
-                <td><%=data.achieved%></td>
-              </tr>
+          <% if (todayTimePromise && todayTimePromise.amount !=null) { %>
+            <div>
+              <%= Math.floor(todayTimePromise.amount/60) %>시간 <%= todayTimePromise.amount%60 %>분
+            </div>
+            <% } else { %>
+              <p>목표 운동 시간을 설정해주세요.</p>
               <% } %>
-            </table>
-          </div>
+
+                <div style="margin-bottom: 40px"></div>
+
+                <h2 class="pb-2 border-bottom">운동 약속</h2>
+                <div class="list-group">
+                  <!--ADD-->
+                  <label class="list-group-item d-flex gap-3 bg-body-tertiary">
+                    <form id="add-task-form" action="/self-promise" method="post">
+                      <input type="datetime-local" name="date" required />
+                      <input type="number" name="amount" required />
+                      <input type="text" name="contents" required />
+                      <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                  </label>
+                  <table>
+                    <tr>
+                      <td>번호</td>
+                      <td>일시</td>
+                      <td>목표 시간</td>
+                      <td>운동 내용</td>
+                      <td>달성 여부</td>
+                    </tr>
+                    <% for(var i=0; i < selfPromises.length; i++) { var data=selfPromises[i]; %>
+                      <tr>
+                        <td>
+                          <%=i + 1%>
+                        </td>
+                        <td>
+                          <%=data.date%>
+                        </td>
+                        <td>
+                          <%=data.amount%>
+                        </td>
+                        <td>
+                          <%=data.contents%>
+                        </td>
+                        <td>
+                          <%=data.achieved%>
+                        </td>
+                      </tr>
+                      <% } %>
+                  </table>
+                </div>
         </div>
       </div>
     </div>
     <div style="margin-bottom: 60px"></div>
 
-    <a
-      href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
-      target="_blank"
-      style="color: blue; font-size: 25px"
-      >나의 헬스 데이터</a
-    >
+    <a href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1" target="_blank"
+      style="color: blue; font-size: 25px">나의 헬스 데이터</a>
 
     <div style="margin-bottom: 60px"></div>
 
-    <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
-  </body>
+    
+  <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
+
+  <div class="container px-4 py-5">
+    <form method="GET" action="/gym-search">
+      <label>장소(구): </label>
+      <input type="text" name="location" required />
+      <button type="submit">검색</button>
+    </form>
+  </div>
+</body>
+
 </html>
