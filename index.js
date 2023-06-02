@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const flash = require("connect-flash");
 const session = require("express-session");
+const exerciseCheckCron = require("./service/cron")
 const passport = require("./config/passport");
 const util = require("./util");
 const morgan = require("morgan");
@@ -37,6 +38,7 @@ app.use("/", require("./routes/home"));
 
 listenMQTT();
 connectDB();
+exerciseCheckCron();
 
 // Port setting
 var port = 8888;
