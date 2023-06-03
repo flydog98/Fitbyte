@@ -3,7 +3,7 @@ const TimePromise = require("../models/userTimePromise");
 const moment = require("moment");
 
 const exerciseCheckCron = () => {
-  cron.schedule("0-59 * * * * *", async () => {
+  cron.schedule("* * 3 * * *", async () => {
     const yesterday = moment().startOf("day").subtract(1, 'd');
     var exerciseTime = 100;
     await TimePromise.updateOne(
