@@ -18,6 +18,7 @@
       }
       .aliceblue-background {
         background-color: aliceblue;
+        min-height: 1000px
       }
       .search {
         color: rgb(15, 150, 150);
@@ -224,6 +225,37 @@
           <div style="margin-bottom: 40px"></div>
 
           <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
+          <% if (exercise == null) { %>
+            <form action="/<%=user%>" method="get">
+              <label>위치를 입력하세요: </label>
+              <input type="text" name="location" required />
+              <button type="submit">검색</button>
+            </form>
+          <% } else { %>
+            <div>
+              <%= exercise.locationname %>의 운동시설 및 등산로
+            </div>
+            <table class="table table-light table-striped table-bordered">
+              <thead>
+                <tr>
+                  <td>번호</td>
+                  <td>위치</td>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><%=exercise.mntn_nm%></td>
+                </tr>
+                <% for(var i = 0; i < exercise.gyms.length; i++) { var data = exercise.gyms[i] %>
+                <tr>
+                  <td><%=i + 2%></td>
+                  <td><%=data[i]%></td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          <% } %>
         </div>
       </div>
     </div>
