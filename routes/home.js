@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const moment = require("moment");
+const qs = require("querystring");
+const getExercise = require("../service/gymsearch");
 const passport = require("../config/passport");
 const User = require("../models/user");
 const TimePromise = require("../models/userTimePromise");
@@ -48,11 +50,9 @@ router.get("/:username", util.isLoggedin, async function (req, res) {
     username: req.params.username,
   }).sort({ date: -1 });
 
-  console.log(selfPromises);
-
   var exercise = null;
-  if (req.params.exercise != null) {
-    exercise = null;
+  if (req.query.location != null) {
+    exercise = await getExercise(req.query.location);
   }
 
   return res.render("home", {
@@ -60,7 +60,7 @@ router.get("/:username", util.isLoggedin, async function (req, res) {
     todayTimePromise: todayTimePromise,
     timePromises: timePromises,
     selfPromises: selfPromises,
-    exercise: null,
+    exercise: exercise,
     moment,
   });
 });
@@ -170,25 +170,6 @@ router.patch("/self-promise", async function (req, res) {
     });
 });
 
-// router.patch("/self-promise", async function (req, res) {
-//   await SelfPromise.updateOne(
-//     { _id: req.body._id },
-//     {
-//       date: req.body.date,
-//       amount: req.body.amount,
-//       contents: req.body.contents,
-//       achieve: req.body.achieve,
-//     },
-//     function (err) {
-//       if (err) {
-//         req.flash("errors", util.parseError(err));
-//         return res.redirect(`/${req.user.username}`);
-//       }
-//       res.redirect(`/${req.user.username}`);
-//     }
-//   );
-// });
-
 router.delete("/time-promise", async function (req, res) {
   await TimePromise.findOneAndDelete(req.body._id, function (err) {
     if (err) {
@@ -206,8 +187,6 @@ router.delete("/time-promise", async function (req, res) {
 router.delete("/self-promise", async function (req, res) {
   await SelfPromise.findOne({_id: req.body._id}).then((doc) => {
     SelfPromise.deleteOne(doc._id, function (err) {
-      console.log("delete");
-      console.log(req.body._id);
       if (err) {
         req.flash("errors", util.parseError(err));
         return res.redirect(`/${req.user.username}`);

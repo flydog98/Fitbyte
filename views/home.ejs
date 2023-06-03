@@ -233,24 +233,27 @@
             </form>
           <% } else { %>
             <div>
-              <%= exercise.locationname %>의 운동시설 및 등산로
+              <%= exercise.locationame %>의 운동시설 및 등산로
             </div>
             <table class="table table-light table-striped table-bordered">
               <thead>
                 <tr>
                   <td>번호</td>
+                  <td>구분</td>
                   <td>위치</td>
                   </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>1</td>
+                  <td>산</td>
                   <td><%=exercise.mntn_nm%></td>
                 </tr>
                 <% for(var i = 0; i < exercise.gyms.length; i++) { var data = exercise.gyms[i] %>
                 <tr>
                   <td><%=i + 2%></td>
-                  <td><%=data[i]%></td>
+                  <td>운동시설</td>
+                  <td><%=data%></td>
                 </tr>
                 <% } %>
               </tbody>
