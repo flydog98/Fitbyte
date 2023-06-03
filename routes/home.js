@@ -48,11 +48,19 @@ router.get("/:username", util.isLoggedin, async function (req, res) {
     username: req.params.username,
   }).sort({ date: -1 });
 
+  console.log(selfPromises);
+
+  var exercise = null;
+  if (req.params.exercise != null) {
+    exercise = null;
+  }
+
   return res.render("home", {
     user: req.params.username,
     todayTimePromise: todayTimePromise,
     timePromises: timePromises,
     selfPromises: selfPromises,
+    exercise: null,
     moment,
   });
 });
@@ -196,17 +204,17 @@ router.delete("/time-promise", async function (req, res) {
 });
 
 router.delete("/self-promise", async function (req, res) {
-  await SelfPromise.findOneAndDelete(req.body._id, function (err) {
-    if (err) {
-      req.flash("errors", util.parseError(err));
-      return res.redirect(`/${req.user.username}`);
-    }
-    res.redirect(`/${req.user.username}`);
-  })
-    .clone()
-    .catch(function (err) {
-      console.log(err);
+  await SelfPromise.findOne({_id: req.body._id}).then((doc) => {
+    SelfPromise.deleteOne(doc._id, function (err) {
+      console.log("delete");
+      console.log(req.body._id);
+      if (err) {
+        req.flash("errors", util.parseError(err));
+        return res.redirect(`/${req.user.username}`);
+      }
+      res.redirect(`/${req.user.username}`);
     });
+  });
 });
 
 module.exports = router;
