@@ -268,22 +268,21 @@
   <script>
 
   // 환경 변수 clientId 가져와서, fitbit권한 인증 링크 생성
- async function fetchConfig() {
-   try {
-    const response = await fetch('http://localhost:8888/api/config', {
+  function fetchConfig() {
+    fetch('http://localhost:8888/api/config', {
       method: 'GET',
       cache: 'no-cache' // 캐시 무시 옵션 추가
     })
-    .then(response => await response.json())
-    .then(data => {
-      const clientId = data.clientId;
-      // fitbit 권한 인증 이후에 callback으로 리다이렉트
-      const fitbitAuthURL = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=activity&redirect_uri=http://localhost:8888/fitbit/callback`;
-      document.querySelector("#fitbit-auth-link").setAttribute("href", fitbitAuthURL);
-    })      
-   }catch(error) {
-     console.error('Error:', error);
-   }
+      .then(response => response.json())
+      .then(data => {
+        const clientId = data.clientId;
+        // fitbit 권한 인증 이후에 callback으로 리다이렉트
+        const fitbitAuthURL = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=activity&redirect_uri=http://localhost:8888/fitbit/callback`;
+        document.querySelector("#fitbit-auth-link").setAttribute("href", fitbitAuthURL);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 
   window.addEventListener('load', fetchConfig); // 페이지 로드될때마다 fetchconfig 호출
