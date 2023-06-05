@@ -235,10 +235,10 @@ function fetchFitbitActivity(accessToken) {
         // --- (어제꺼만 조회)
         const today = new Date();
         const baseUrl = 'https://api.fitbit.com/1/user/-/activities/list.json';
-        const beforeDate = today;
+        //const beforeDate = today;
         // --- (한달전까지 조회할 경우 beforeDate='today' 대신에 아래 3줄 사용)
-        // const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-        // const beforeDate = formatDate(oneMonthAgo); // 이전 날짜를 요청에 사용하기 위해 형식 맞춤
+        const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        const beforeDate = formatDate(oneMonthAgo); // 이전 날짜를 요청에 사용하기 위해 형식 맞춤
         const sort = 'desc';
         const limit = 100;
         const queryParams = new URLSearchParams({
