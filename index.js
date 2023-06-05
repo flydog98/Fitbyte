@@ -1,12 +1,12 @@
+const serverless = require("serverless-http");
 const express = require("express");
 //const { connectDB, AccessToken } = require("./config/db");
 const connectDB = require("./config/db");
-
-const listenMQTT = require("./mqtt/sensor")
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const flash = require("connect-flash");
 const session = require("express-session");
+const exerciseCheckCron = require("./service/cron")
 const passport = require("./config/passport");
 const util = require("./util");
 const morgan = require("morgan");
@@ -37,11 +37,13 @@ app.use(function (req, res, next) {
 // Routes
 app.use("/", require("./routes/home"));
 
-listenMQTT();
 connectDB();
+exerciseCheckCron();
 
 // Port setting
-var port = 8888;
-app.listen(port, function () {
-  console.log("server on! http://localhost:" + port);
-});
+// var port = 8888;
+// app.listen(port, function () {
+//   console.log("server on! http://localhost:" + port);
+// });
+
+module.exports.handler = serverless(app);
