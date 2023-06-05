@@ -27,24 +27,24 @@
         width: 600px;
         height: 400px;
       }
-      .d-flex {
-        margin-left: 15px;
-        width: 450px;
-      }
-      .navbar-brand {
-        margin-left: 350px;
+
+      .list-group-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
       }
 
-      Text {
-        font-size: 35px;
+      .list-group-item input {
+        margin-right: 10px;
+      }
+
+      .list-group-item strong {
         font-weight: bold;
       }
 
-      .add {
-        margin-top: 400px;
-        width: 2000px;
-        height: 1000px;
-        background-color: rgb(229, 240, 250);
+      .list-group-item small {
+        color: #888;
       }
 
       .column {
@@ -150,7 +150,7 @@
             <% }%>
           </div>
 
-          <div style="margin-bottom: 40px"></div>
+                <div style="margin-bottom: 40px"></div>
 
           <h2 class="pb-2 border-bottom">운동 약속</h2>
           <div class="list-group">
@@ -211,7 +211,6 @@
             </table>
             <% } %>
           </div>
-
           <div style="margin-bottom: 40px"></div>
 
           <h2 class="pb-2 border-bottom">FitByte 수집 데이터</h2>
@@ -263,4 +262,120 @@
       </div>
     </div>
   </body>
+
+
+  <script>
+
+  // 환경 변수 clientId 가져와서, fitbit권한 인증 링크 생성
+  function fetchConfig() {
+    fetch('http://localhost:8888/api/config', {
+      method: 'GET',
+      cache: 'no-cache' // 캐시 무시 옵션 추가
+    })
+      .then(response => response.json())
+      .then(data => {
+        const clientId = data.clientId;
+        // fitbit 권한 인증 이후에 callback으로 리다이렉트
+        const fitbitAuthURL = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=activity%20profile%20location&redirect_uri=http://localhost:8888/fitbit/callback`;
+        document.querySelector("#fitbit-auth-link").setAttribute("href", fitbitAuthURL);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+window.addEventListener('load', fetchConfig); // 페이지 로드될때마다 fetchconfig 호출
+  </script>
+
 </html>
+
+<!-- //         // 서버로부터 액세스 토큰 응답 받아 처리
+//         const accessToken = data.accessToken;
+//         localStorage.setItem('accessToken', accessToken);
+//         // 클라이언트에서 액세스 토큰을 저장하거나 사용가능
+//         fetchFitbitActivity()
+//         .then(activityData => {
+//         // 목표 달성 메시지
+//         //const timePromiseAmount = data.timePromiseAmount; // time-promise에서 가져온 값
+//         const activityAmount = data.activityAmount; // 운동 시간 데이터
+
+//         if (activityAmount >= todayTimePromise) {
+//           document.querySelector("#message").innerText = "운동 시간 목표를 달성했습니다!";
+//         } else {
+//           document.querySelector("#message").innerText = "운동 시간 목표를 달성하지 못했습니다.";
+//         }
+//       })
+//       .catch(error => {
+//         console.error('Error:', error);
+//       });
+//     })
+//     .catch(error => {
+//       console.error('Error', error);
+//     });
+//   }
+// }
+
+        // return fetch('http://localhost:8888/fitbit/callback', {
+        //   method: 'GET',
+        //   cache: 'no-cache'
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //   const accessToken = data.accessToken;
+        // })
+    //const accessToken = getCookie('accessToken');
+
+//     if (accessToken) {
+//       console.log('액세스 토큰 잘 가져와졌음');
+
+//     const baseUrl = 'https://api.fitbit.com/1/user/-/activities/list.json';
+//     const beforeDate = 'today';
+//     const sort = 'desc';
+//     const limit = 100;
+
+//     const queryParams = new URLSearchParams({
+//       beforeDate,
+//       sort,
+//       limit
+//     });
+
+//     // 인증 토큰 붙이기
+//     const requestUrl = `${baseUrl}?${queryParams.toString()}`;
+
+//     const headers = {
+//       'Authorization': `Bearer ${accessToken}`
+//     };
+
+//     return fetch(requestUrl, { headers })
+//       .then(response => response.json())
+//       .then(data => {
+//         return data.activities.map(activity => {
+//           return activity.activeZoneMinutes.minutesInHeartRateZones.minutes;
+//         })
+//       })
+//       .catch(error => {
+//         console.error('Error:', error);
+//       });
+//   } else {
+//     console.log('액세스 토큰 없음');
+//     return Promise.reject(new Error('액세스 토큰 없음'));
+//   }
+// }
+    //const accessToken = getCookie('accessToken');
+
+
+// 쿠키에서 특정 이름의 쿠키값을 가져오는 함수
+// function getCookie(name) {
+//   const cookies = document.cookie.split(';');
+//   for (let i = 0; i < cookies.length; i++) {
+//     const cookie = cookies[i].trim();
+//     if (cookie.startsWith(name + '=')) {
+//       return cookie.substring(name.length + 1);
+//     }
+//   }
+//   return null;
+// }
+
+// 페이지 로드 시 fetchConfig 함수 호출
+// window.addEventListener('load', fetchConfig);
+    // 페이지 로드 시 인증 코드 추출 함수,  환경 변수 값 가져오는 함수 호출 -->

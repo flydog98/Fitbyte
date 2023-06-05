@@ -1,5 +1,6 @@
 const serverless = require("serverless-http");
 const express = require("express");
+//const { connectDB, AccessToken } = require("./config/db");
 const connectDB = require("./config/db");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
