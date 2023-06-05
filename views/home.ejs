@@ -165,7 +165,7 @@
       href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
       target="_blank"
       style="color: blue; font-size: 25px"
-      >나의 헬스 데이터</a
+      >환경 데이터</a
     >
 
     <div style="margin-bottom: 60px"></div>
@@ -175,48 +175,117 @@
 
 
   <script>
-  // 환경 변수 값을 가져오는 함수
+
+  // 환경 변수 clientId 가져와서, fitbit권한 인증 링크 생성
   function fetchConfig() {
-    fetch('/api/config')
+    fetch('http://localhost:8888/api/config', {
+      method: 'GET',
+      cache: 'no-cache' // 캐시 무시 옵션 추가
+    })
       .then(response => response.json())
       .then(data => {
         const clientId = data.clientId;
-        // 환경 변수 값을 이용한 로직 실행
-        const fitbitAuthURL = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=http://localhost:8888/callback&scope=activity%20location`;
+        // fitbit 권한 인증 이후에 callback으로 리다이렉트
+        const fitbitAuthURL = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=activity%20profile%20location&redirect_uri=http://localhost:8888/fitbit/callback`;
         document.querySelector("#fitbit-auth-link").setAttribute("href", fitbitAuthURL);
       })
       .catch(error => {
         console.error('Error:', error);
       });
   }
-  // 페이지 로드 시 환경 변수 값을 가져오는 함수 호출
-  window.onload = fetchConfig;
 
-  // OAuth 관련
-    // URL에서 인증 코드 추출
-    function extractAuthorizationCode() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const authorizationCode = urlParams.get('code');
-      
-      // 서버로 인증 코드 전송
-      fetch('/fitbit/callback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ code: authorizationCode })
-      })
-      .then(response => {
-        // 서버로부터 액세스 토큰 응답 받아 처리
-        // 클라이언트에서 액세스 토큰을 저장하거나 사용가능
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    }
-  
-    // 페이지 로드 시 인증 코드 추출 함수 호출
-    window.onload = extractAuthorizationCode;
+window.addEventListener('load', fetchConfig); // 페이지 로드될때마다 fetchconfig 호출
   </script>
 
 </html>
+
+<!-- //         // 서버로부터 액세스 토큰 응답 받아 처리
+//         const accessToken = data.accessToken;
+//         localStorage.setItem('accessToken', accessToken);
+//         // 클라이언트에서 액세스 토큰을 저장하거나 사용가능
+//         fetchFitbitActivity()
+//         .then(activityData => {
+//         // 목표 달성 메시지
+//         //const timePromiseAmount = data.timePromiseAmount; // time-promise에서 가져온 값
+//         const activityAmount = data.activityAmount; // 운동 시간 데이터
+
+//         if (activityAmount >= todayTimePromise) {
+//           document.querySelector("#message").innerText = "운동 시간 목표를 달성했습니다!";
+//         } else {
+//           document.querySelector("#message").innerText = "운동 시간 목표를 달성하지 못했습니다.";
+//         }
+//       })
+//       .catch(error => {
+//         console.error('Error:', error);
+//       });
+//     })
+//     .catch(error => {
+//       console.error('Error', error);
+//     });
+//   }
+// }
+
+        // return fetch('http://localhost:8888/fitbit/callback', {
+        //   method: 'GET',
+        //   cache: 'no-cache'
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //   const accessToken = data.accessToken;
+        // })
+    //const accessToken = getCookie('accessToken');
+
+//     if (accessToken) {
+//       console.log('액세스 토큰 잘 가져와졌음');
+
+//     const baseUrl = 'https://api.fitbit.com/1/user/-/activities/list.json';
+//     const beforeDate = 'today';
+//     const sort = 'desc';
+//     const limit = 100;
+
+//     const queryParams = new URLSearchParams({
+//       beforeDate,
+//       sort,
+//       limit
+//     });
+
+//     // 인증 토큰 붙이기
+//     const requestUrl = `${baseUrl}?${queryParams.toString()}`;
+
+//     const headers = {
+//       'Authorization': `Bearer ${accessToken}`
+//     };
+
+//     return fetch(requestUrl, { headers })
+//       .then(response => response.json())
+//       .then(data => {
+//         return data.activities.map(activity => {
+//           return activity.activeZoneMinutes.minutesInHeartRateZones.minutes;
+//         })
+//       })
+//       .catch(error => {
+//         console.error('Error:', error);
+//       });
+//   } else {
+//     console.log('액세스 토큰 없음');
+//     return Promise.reject(new Error('액세스 토큰 없음'));
+//   }
+// }
+    //const accessToken = getCookie('accessToken');
+
+
+// 쿠키에서 특정 이름의 쿠키값을 가져오는 함수
+// function getCookie(name) {
+//   const cookies = document.cookie.split(';');
+//   for (let i = 0; i < cookies.length; i++) {
+//     const cookie = cookies[i].trim();
+//     if (cookie.startsWith(name + '=')) {
+//       return cookie.substring(name.length + 1);
+//     }
+//   }
+//   return null;
+// }
+
+// 페이지 로드 시 fetchConfig 함수 호출
+// window.addEventListener('load', fetchConfig);
+    // 페이지 로드 시 인증 코드 추출 함수,  환경 변수 값 가져오는 함수 호출 -->
