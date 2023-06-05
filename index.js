@@ -40,10 +40,10 @@ app.use("/", require("./routes/home"));
 connectDB();
 exerciseCheckCron();
 
-// Port setting
-// var port = 8888;
-// app.listen(port, function () {
-//   console.log("server on! http://localhost:" + port);
-// });
+//Port setting
+var port = 8888;
+app.listen(port, function () {
+  console.log("server on! http://localhost:" + port);
+});
 
 module.exports.handler = serverless(app);
