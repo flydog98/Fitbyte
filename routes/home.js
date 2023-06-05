@@ -4,7 +4,9 @@ const fetch = require('node-fetch').default;
 
 // 나머지 코드...
 const router = express.Router();
-const moment = require('moment');
+const moment = require("moment");
+const qs = require("querystring");
+const getExercise = require("../service/gymsearch");
 const passport = require("../config/passport");
 const User = require("../models/user");
 const TimePromise = require("../models/userTimePromise");
@@ -52,22 +54,34 @@ router.get("/register", function (req, res) {
 router.get("/:username", util.isLoggedin, async function (req, res) {
   // user 없을 때 방어 로직
 
-  const today = moment().startOf('day');
+  const today = moment().startOf("day");
   var todayTimePromise = await TimePromise.findOne({
     username: req.params.username,
     date: {
-      $gte: today.toDate()
-    }
+      $gte: today.toDate(),
+    },
   });
 
+  var timePromises = await TimePromise.find({
+    username: req.params.username,
+  }).sort({ date: -1 });
+
   var selfPromises = await SelfPromise.find({
-    username: req.params.username
-  })
+    username: req.params.username,
+  }).sort({ date: -1 });
+
+  var exercise = null;
+  if (req.query.location != null) {
+    exercise = await getExercise(req.query.location);
+  }
 
   return res.render("home", {
     user: req.params.username,
     todayTimePromise: todayTimePromise,
-    selfPromises: selfPromises
+    timePromises: timePromises,
+    selfPromises: selfPromises,
+    exercise: exercise,
+    moment,
   });
 });
 
@@ -150,14 +164,13 @@ router.post("/self-promise", async function (req, res) {
     function (err) {
       if (err) {
         req.flash("errors", util.parseError(err));
-        return res.redirect(`/${req.body.username}`);
+        return res.redirect(`/${req.user.username}`);
       }
       console.log(data)
       res.redirect(`/${req.user.username}`);
     }
   );
 });
-
 
 // ------ Fitbit OAuth 인증, 데이터 가져오기
 
@@ -285,4 +298,52 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
+
+router.patch("/self-promise", async function (req, res) {
+  await SelfPromise.updateOne(
+    { _id: req.body._id },
+    {
+      achieved: true,
+    },
+    function (err) {
+      if (err) {
+        req.flash("errors", util.parseError(err));
+        return res.redirect(`/${req.user.username}`);
+      }
+      res.redirect(`/${req.user.username}`);
+    }
+  )
+    .clone()
+    .catch(function (err) {
+      console.log(err);
+    });
+});
+
+router.delete("/time-promise", async function (req, res) {
+  await TimePromise.findOneAndDelete(req.body._id, function (err) {
+    if (err) {
+      req.flash("errors", util.parseError(err));
+      return res.redirect(`/${req.user.username}`);
+    }
+    res.redirect(`/${req.user.username}`);
+  })
+    .clone()
+    .catch(function (err) {
+      console.log(err);
+    });
+});
+
+router.delete("/self-promise", async function (req, res) {
+  await SelfPromise.findOne({_id: req.body._id}).then((doc) => {
+    SelfPromise.deleteOne(doc._id, function (err) {
+      if (err) {
+        req.flash("errors", util.parseError(err));
+        return res.redirect(`/${req.user.username}`);
+      }
+      res.redirect(`/${req.user.username}`);
+    });
+  });
+});
+
 module.exports = router;
+
