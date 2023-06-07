@@ -19,4 +19,18 @@ const connectDB = async () => {
   }
 };
 
+// fitbit 액세스 토큰 모델 정의
+// const accessTokenSchema = new mongoose.Schema({
+//   token:String
+// });
+
+// const AccessToken = mongoose.model('AccessToken', accessTokenSchema);
+
+
+// const saveAccessToken = (accessToken) => {
+//   const newAccessToken = new AccessToken({ token: accessToken });
+//   return newAccessToken.save();
+// };
+
 module.exports = connectDB;
+//module.exports = { connectDB, saveAccessToken, AccessToken };

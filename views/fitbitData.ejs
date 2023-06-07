@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Fitbit 데이터</title>
+  </head>
+  <body>
+    <h1>Fitbit 데이터 페이지</h1>
+    <!-- 데이터 출력 -->
+    <pre><%= JSON.stringify(fitbitData, null, 2) %></pre>
+    <form action="/" method="get">
+      <input type="submit" value="Fitbit 데이터 전송">
+    </form>
+  </body>
+</html>

@@ -4,18 +4,21 @@
   "description": "이 저장소의 코드는\r [http://a-mean-blog.com/ko/blog/Node-JS-첫걸음/게시판-만들기](http://a-mean-blog.com/ko/blog/Node-JS-첫걸음/게시판-만들기)에서 작성되었습니다.\r <br>",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.1238.0",
+    "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",
     "dependencies": "^0.0.1",
     "dependency": "^0.0.1",
+    "dotenv": "^16.0.3",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.2",
@@ -27,10 +30,18 @@
     "mqtt": "^4.3.7",
     "multer": "^1.4.4",
     "multer-s3": "^3.0.1",
+    "node-cron": "^3.0.2",
+    "node-fetch": "^2.6.11",
     "passport": "^0.4.1",
+    "passport-fitbit-oauth2": "^1.0.2",
     "passport-local": "^1.0.0",
     "request": "^2.88.2",
+    "serverless-http": "^3.2.0",
     "xml-js": "^1.6.11",
     "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "serverless-offline": "^12.0.4"
   }
 }

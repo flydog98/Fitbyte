@@ -16,9 +16,9 @@
         border-radius: 1.5rem;
         margin-right: 15px;
       }
-      .full_screen {
+      .aliceblue-background {
         background-color: aliceblue;
-        height: 1000px;
+        min-height: 1000px
       }
       .search {
         color: rgb(15, 150, 150);
@@ -27,24 +27,24 @@
         width: 600px;
         height: 400px;
       }
-      .d-flex {
-        margin-left: 15px;
-        width: 450px;
-      }
-      .navbar-brand {
-        margin-left: 350px;
+
+      .list-group-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
       }
 
-      Text {
-        font-size: 35px;
+      .list-group-item input {
+        margin-right: 10px;
+      }
+
+      .list-group-item strong {
         font-weight: bold;
       }
 
-      .add {
-        margin-top: 400px;
-        width: 2000px;
-        height: 1000px;
-        background-color: rgb(229, 240, 250);
+      .list-group-item small {
+        color: #888;
       }
 
       .column {
@@ -95,124 +95,287 @@
   </head>
   <body>
     <%- include('./partials/nav') %>
-    <div class="full_screen">
+    <div class="aliceblue-background">
       <div class="container mb-3">
         <div class="container px-4 py-5" id="icon-grid">
-          <form method="POST" action="/time-promise">
+          <div class="list-group">
             <h2 class="pb-2 border-bottom">목표 운동 시간</h2>
-            <label>목표 시간: </label>
-            <input type="number" name="amount" min="1" max="1440" required />
-            분
-            <button type="submit">입력</button>
-          </form>
+            <% if (todayTimePromise && todayTimePromise.amount != null) { %>
+            <div>
+              오늘의 목표 시간: 
+              <%= Math.floor(todayTimePromise.amount/60) %>시간 <%=
+              todayTimePromise.amount%60 %>분
+            </div>
+            <% } else { %>
+            <div>오늘의 목표 운동 시간을 설정해주세요.</div>
+            <form method="POST" action="/time-promise">
+              <label>목표 시간: </label>
+              <input type="number" name="amount" min="1" max="1440" required />
+              분
+              <button type="submit">입력</button>
+            </form>
+            <% } %>
+            <% if (timePromises.length != 0) { %>
+            <table class="table table-light table-striped table-bordered">
+              <caption>검증은 매일 새벽에 이뤄집니다</caption>
+              <thead>
+                <tr>
+                  <td>번호</td>
+                  <td>일시</td>
+                  <td>목표 시간</td>
+                  <td>달성 여부</td>
+                  <td>제어</td>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(var i = 0; i < timePromises.length; i++) { var data =
+                timePromises[i]; %>
+                <tr>
+                  <td><%=i + 1%></td>
+                  <td><%=moment(data.date).format("YYYY-MM-DD")%></td>
+                  <td><%=data.amount%></td>
+                  <td><%=data.achieved%></td>
+                  <td>
+                    <form action="/time-promise?_method=delete" method="post">
+                      <input type="hidden" name="_id" value=
+                      <%=data._id%>
+                      >
+                      <button type="submit">삭제</button>
+                    </form>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <% }%>
+          </div>
 
-          <% if (todayTimePromise && todayTimePromise.amount != null) { %>
-          <p>
-            <%= Math.floor(todayTimePromise.amount/60) %>시간 <%=
-            todayTimePromise.amount%60 %>분
-          </p>
-          <% } else { %>
-          <p>목표 운동 시간을 설정해주세요.</p>
-          <% } %>
-
-          <div style="margin-bottom: 40px"></div>
+                <div style="margin-bottom: 40px"></div>
 
           <h2 class="pb-2 border-bottom">운동 약속</h2>
           <div class="list-group">
             <!--ADD-->
-            <label class="list-group-item d-flex gap-3 bg-body-tertiary">
-              <form id="add-task-form">
-                <input type="datetime-local" name="date" required />
-                <input type="number" name="amount" required />
-                <input type="text" name="contents" required />
-                <button type="submit" class="btn btn-primary">Add</button>
+            <label>
+              <form id="add-task-form" action="/self-promise" method="post">
+                <div>
+                  <label>날짜 : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label>
+                  <input type="datetime-local" name="date" required />
+                </div>
+                <div>
+                  <label>목표 시간: </label>
+                  <input type="number" name="amount" required />
+                </div>
+                <div>
+                  <label>운동 내용: </label>
+                  <input type="text" name="contents" required />
+                  <button type="submit">추가</button>
+                </div>
               </form>
             </label>
+            <% if (selfPromises.length != 0) { %>
+            <table class="table table-light table-striped table-bordered">
+              <thead>
+                <tr>
+                  <td>번호</td>
+                  <td>일시</td>
+                  <td>목표 시간</td>
+                  <td>운동 내용</td>
+                  <td>달성 여부</td>
+                  <td>제어</td>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(var i = 0; i < selfPromises.length; i++) { var data =
+                selfPromises[i]; %>
+                <tr>
+                  <td><%=i + 1%></td>
+                  <td><%=moment(data.date).format("YYYY-MM-DD HH:mm")%></td>
+                  <td><%=data.amount%></td>
+                  <td><%=data.contents%></td>
+                  <td><%=data.achieved%></td>
+                  <td>
+                    <form action="/self-promise?_method=patch" method="post">
+                      <input type="hidden" name="_id" value=
+                      <%=data._id%>
+                      >
+                      <button type="submit">달성</button>
+                    </form>
+                    <form action="/self-promise?_method=delete" method="post">
+                      <input type="hidden" name="_id" value=<%=data._id%> >
+                      <button type="submit">삭제</button>
+                    </form>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <% } %>
           </div>
+          <div style="margin-bottom: 40px"></div>
+
+          <h2 class="pb-2 border-bottom">FitByte 수집 데이터</h2>
+          <a
+            href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
+            target="_blank"
+            style="color: blue; font-size: 25px"
+            >link</a
+          >
+
+          <div style="margin-bottom: 40px"></div>
+
+          <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
+          <% if (exercise == null) { %>
+            <form action="/<%=user%>" method="get">
+              <label>위치를 입력하세요: </label>
+              <input type="text" name="location" required />
+              <button type="submit">검색</button>
+            </form>
+          <% } else { %>
+            <div>
+              <%= exercise.locationame %>의 운동시설 및 등산로
+            </div>
+            <table class="table table-light table-striped table-bordered">
+              <thead>
+                <tr>
+                  <td>번호</td>
+                  <td>구분</td>
+                  <td>위치</td>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>산</td>
+                  <td><%=exercise.mntn_nm%></td>
+                </tr>
+                <% for(var i = 0; i < exercise.gyms.length; i++) { var data = exercise.gyms[i] %>
+                <tr>
+                  <td><%=i + 2%></td>
+                  <td>운동시설</td>
+                  <td><%=data%></td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          <% } %>
         </div>
       </div>
     </div>
-
-    <script>
-      const timePromiseForm = document.querySelector(
-        "#icon-grid form[action='/time-promise']"
-      );
-      timePromiseForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const amountInput = timePromiseForm.querySelector(
-          'input[name="amount"]'
-        );
-        const amount = amountInput.value
-          ? parseInt(amountInput.value, 10)
-          : null;
-        fetch("/time-promise", {
-          method: "POST",
-          body: JSON.stringify({ amount }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data && data.amount !== null) {
-              const amountElement = document.createElement("p");
-              amountElement.innerHTML = `목표 운동 시간 ${Math.floor(
-                data.amount / 60
-              )}시간 ${data.amount % 60}분`;
-              document.querySelector("#icon-grid").appendChild(amountElement);
-            }
-          });
-      });
-
-      const addTaskForm = document.getElementById("add-task-form");
-
-      addTaskForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const formData = new FormData(event.target);
-        const response = await fetch("/self-promise", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          console.error("Failed to add task");
-          return;
-        }
-
-        const task = await response.json();
-        const taskItem = document.createElement("label");
-        taskItem.classList.add("list-group-item", "d-flex", "gap-3");
-        taskItem.innerHTML = `
-                <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
-                <span class="pt-1 form-checked-content">
-                  <strong>${task.contents}</strong>
-                  <small class="d-block text-body-secondary">
-                    <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"/></svg>
-                    ${task.date} for ${task.amount} minutes
-                  </small>
-                </span>
-              `;
-
-        const taskList = document.querySelector(".list-group");
-        taskList.insertBefore(
-          taskItem,
-          addTaskForm.closest(".list-group-item")
-        );
-        addTaskForm.reset();
-      });
-    </script>
-    <div style="margin-bottom: 60px"></div>
-
-    <a
-      href="http://13.209.155.211:3000/d/b1851fe4-77e8-42cb-976f-64ab5e30df6b/raspberrypi-test?orgId=1"
-      target="_blank"
-      style="color: blue; font-size: 25px"
-      >나의 헬스 데이터</a
-    >
-
-    <div style="margin-bottom: 60px"></div>
-
-    <h2 class="pb-2 border-bottom">주변 운동시설 및 등산로</h2>
   </body>
+
+
+  <script>
+
+  // 환경 변수 clientId 가져와서, fitbit권한 인증 링크 생성
+  function fetchConfig() {
+    fetch('http://localhost:8888/api/config', {
+      method: 'GET',
+      cache: 'no-cache' // 캐시 무시 옵션 추가
+    })
+      .then(response => response.json())
+      .then(data => {
+        const clientId = data.clientId;
+        // fitbit 권한 인증 이후에 callback으로 리다이렉트
+        const fitbitAuthURL = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=activity%20profile%20location&redirect_uri=http://localhost:8888/fitbit/callback`;
+        document.querySelector("#fitbit-auth-link").setAttribute("href", fitbitAuthURL);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+window.addEventListener('load', fetchConfig); // 페이지 로드될때마다 fetchconfig 호출
+  </script>
+
 </html>
+
+<!-- //         // 서버로부터 액세스 토큰 응답 받아 처리
+//         const accessToken = data.accessToken;
+//         localStorage.setItem('accessToken', accessToken);
+//         // 클라이언트에서 액세스 토큰을 저장하거나 사용가능
+//         fetchFitbitActivity()
+//         .then(activityData => {
+//         // 목표 달성 메시지
+//         //const timePromiseAmount = data.timePromiseAmount; // time-promise에서 가져온 값
+//         const activityAmount = data.activityAmount; // 운동 시간 데이터
+
+//         if (activityAmount >= todayTimePromise) {
+//           document.querySelector("#message").innerText = "운동 시간 목표를 달성했습니다!";
+//         } else {
+//           document.querySelector("#message").innerText = "운동 시간 목표를 달성하지 못했습니다.";
+//         }
+//       })
+//       .catch(error => {
+//         console.error('Error:', error);
+//       });
+//     })
+//     .catch(error => {
+//       console.error('Error', error);
+//     });
+//   }
+// }
+
+        // return fetch('http://localhost:8888/fitbit/callback', {
+        //   method: 'GET',
+        //   cache: 'no-cache'
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //   const accessToken = data.accessToken;
+        // })
+    //const accessToken = getCookie('accessToken');
+
+//     if (accessToken) {
+//       console.log('액세스 토큰 잘 가져와졌음');
+
+//     const baseUrl = 'https://api.fitbit.com/1/user/-/activities/list.json';
+//     const beforeDate = 'today';
+//     const sort = 'desc';
+//     const limit = 100;
+
+//     const queryParams = new URLSearchParams({
+//       beforeDate,
+//       sort,
+//       limit
+//     });
+
+//     // 인증 토큰 붙이기
+//     const requestUrl = `${baseUrl}?${queryParams.toString()}`;
+
+//     const headers = {
+//       'Authorization': `Bearer ${accessToken}`
+//     };
+
+//     return fetch(requestUrl, { headers })
+//       .then(response => response.json())
+//       .then(data => {
+//         return data.activities.map(activity => {
+//           return activity.activeZoneMinutes.minutesInHeartRateZones.minutes;
+//         })
+//       })
+//       .catch(error => {
+//         console.error('Error:', error);
+//       });
+//   } else {
+//     console.log('액세스 토큰 없음');
+//     return Promise.reject(new Error('액세스 토큰 없음'));
+//   }
+// }
+    //const accessToken = getCookie('accessToken');
+
+
+// 쿠키에서 특정 이름의 쿠키값을 가져오는 함수
+// function getCookie(name) {
+//   const cookies = document.cookie.split(';');
+//   for (let i = 0; i < cookies.length; i++) {
+//     const cookie = cookies[i].trim();
+//     if (cookie.startsWith(name + '=')) {
+//       return cookie.substring(name.length + 1);
+//     }
+//   }
+//   return null;
+// }
+
+// 페이지 로드 시 fetchConfig 함수 호출
+// window.addEventListener('load', fetchConfig);
+    // 페이지 로드 시 인증 코드 추출 함수,  환경 변수 값 가져오는 함수 호출 -->
